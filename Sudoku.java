@@ -1,99 +1,86 @@
-public class Sudoku {
+import java.util.Scanner;
+public class Sudoku{
+    static int[][]board= new int[9][9];
 
-    static int[][] board = {
-        {5, 3, 0, 0, 7, 0, 0, 0, 0},
-        {6, 0, 0, 1, 9, 5, 0, 0, 0},
-        {0, 9, 8, 0, 0, 0, 0, 6, 0},
-        {8, 0, 0, 0, 6, 0, 0, 0, 3},
-        {4, 0, 0, 8, 0, 3, 0, 0, 1},
-        {7, 0, 0, 0, 2, 0, 0, 0, 6},
-        {0, 6, 0, 0, 0, 0, 2, 8, 0},
-        {0, 0, 0, 4, 1, 9, 0, 0, 5},
-        {0, 0, 0, 0, 8, 0, 0, 7, 9}
-    };
+    public static boolean isSafe(int row, int col, int num){
 
-    public static boolean isSafe(int row, int col, int num) {
-
-        // Check row
-        for (int i = 0; i < 9; i++) {
-            if (board[row][i] == num) {
+        //Check rows
+        for(int i=0;i<row;i++){
+            if(board[row][i]==num){
                 return false;
             }
         }
 
-        // Check column
-        for (int i = 0; i < 9; i++) {
-            if (board[i][col] == num) {
+        //Check Columns
+        for(int j=0;j<col;j++){
+            if(board[j][col]==num){
                 return false;
             }
         }
 
-        int firstrow = (row / 3) * 3;
-        int firstcolumn = (col / 3) * 3;
+        int firstRow=(row*3)/3;
+        int firstCol=(col*3)/3;
 
-        // Check 3x3 box
-        for (int i = firstrow; i < firstrow + 3; i++) {
-            for (int j = firstcolumn; j < firstcolumn + 3; j++) {
-                if (board[i][j] == num) {
+        //Check for the diagonals
+        for(int i=firstRow;i<firstRow+3;i++){
+            for(int j=firstCol;j<firstCol+3;j++){
+                if(board[i][j]==num){
                     return false;
                 }
             }
         }
-
         return true;
     }
 
-    public static boolean solve() {
+    public static boolean place(){
+        for(int row=0;row<9;row++){
+            for(int col=0;col<9;col++){
+                if(board[row][col]==0){
+                    for(int num=1;num<=9;num++){
+                        if(isSafe(row, col, num)){
+                            board[row][col]=num;
 
-        for (int row = 0; row < 9; row++) {
-            for (int col = 0; col < 9; col++) {
-
-                if (board[row][col] == 0) {
-
-                    // Try numbers from 1 to 9
-                    for (int num = 1; num <= 9; num++) {
-
-                        if (isSafe(row, col, num)) {
-
-                            board[row][col] = num;
-
-                            if (solve()) {
+                            if(place()){
                                 return true;
                             }
 
-                            // Backtracking
-                            board[row][col] = 0;
+                            board[row][col]=0;
                         }
                     }
-
-                    // No number fits in this cell
-                    return false;
                 }
+
+               
             }
         }
-
-        // No empty cells remain
-        return true;
+         return false;// No element can be placed
     }
 
-    public static void display() {
-        for (int i = 0; i < 9; i++) {
-            for (int j = 0; j < 9; j++) {
-                System.out.print(board[i][j] + " ");
+    public static void Display(){
+        for(int i=0;i<9;i++){
+            for(int j=0;j<9;j++){
+                System.out.print(board[i][j]+" ");
             }
             System.out.println();
         }
     }
-
     public static void main(String[] args) {
-        System.out.println("Original Sudoku:");
-        display();
+        Scanner sc = new Scanner(System.in);
 
-        if (solve()) {
-            System.out.println("\nSolved Sudoku:");
-            display();
-        } else {
-            System.out.println("There exists no solution for this Sudoku!");
+        System.out.print("Enter the Sudoku elements (0 for empty spaces): ");
+        for(int i=0;i<9;i++){
+            for(int j=0;j<9;j++){
+                board[i][j]=sc.nextInt();
+            }
+        }
+
+        System.out.print("Original Sudoku: ");
+        Display();
+
+        if(place()){
+            System.out.println("The solved Sudoku is: ");
+            Display();
+        } else{
+            System.out.println("There exists no soluton for this Sudoku!");
         }
     }
 }
